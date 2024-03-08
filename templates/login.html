@@ -167,10 +167,21 @@
     function encryptAndSubmit() {
         var passwordInput = document.getElementById("password");
         var passwordValue = passwordInput.value;
-        var encryptedPassword = submit_hex_md5(passwordValue);
-        passwordInput.value = encryptedPassword;
+        passwordInput.value = submit_hex_md5(passwordValue);
         document.form1.submit();
     }
+    document.getElementById('captcha-image').addEventListener('click', function() {
+        const jsessionid = document.getElementById('cookie-input').value
+        fetch('/getCaptcha?jsessionid='+jsessionid)
+            .then(response => response.json())
+            .then(Data => {
+                document.getElementById('captcha-image').src = "data:image/jpeg;base64," + Data.captchaImage;
+                document.getElementById('cookie-input').value = Data.jsessionid
+            })
+            .catch(error => {
+                console.error("Error fetching new CAPTCHA image:", error);
+            });
+    });
 </script>
 </body>
 </html>

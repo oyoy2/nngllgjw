@@ -1,7 +1,7 @@
 package config
 
 var BaseURL = "http://jw.glutnn.cn/academic/"
-var Port = "8080"
+var Port = "3010"
 var CaptchaPath = "getCaptcha.do?captchaCheckCode=0"
 var CheckPath = "checkCaptcha.do?captchaCode="
 var LoginPath = "j_acegi_security_check"
@@ -17,7 +17,7 @@ var classroom_query_week = "teacher/teachresource/roomschedule_week.jsdo"
 var Current_semester_schedule = "student/currcourse/currcourse.jsdo?groupId=&moduleId=2000"
 
 // 等级考试成绩
-var level_exam_scores = "student/queryscore/skilltestscore.jsdo?groupId=&moduleId=2022"
+var Level_exam_scores = "student/queryscore/skilltestscore.jsdo"
 
 // 专业教学计划维护
 var major_teaching_plan_maintenance = "211"
@@ -58,7 +58,7 @@ var Personal_grades_inquiry = "manager/score/studentOwnScore.do?groupId=&moduleI
 var change_password = "sysmgr/user_password.jsdo?groupId=&moduleId=155"
 
 // 学生考试安排
-var student_exam_arrangement = "student/exam/index.jsdo"
+var Student_exam_arrangement = "student/exam/index.jsdo"
 
 // 学生申请免修免考
 var student_apply_for_exemption = ""

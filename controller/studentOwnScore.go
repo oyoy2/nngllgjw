@@ -19,6 +19,7 @@ type StudentOwnScore struct {
 	Credits     string `json:"Credits"`
 	Year        string `json:"Year"`
 	Categories  string `json:"Categories"`
+	Teacher     string `json:"teacher"`
 }
 type StudentOwnScoreExcel struct {
 	Arithmetic string `json:"Arithmetic"`
@@ -26,13 +27,13 @@ type StudentOwnScoreExcel struct {
 	AverageGPA string `json:"AverageGPA"`
 }
 
-func GetAllStudentOwnScores(cookies *http.Cookie) ([]*StudentOwnScore, error, StudentOwnScoreExcel, int) {
+func GetAllStudentOwnScores(cookies *http.Cookie, year string, term string) ([]*StudentOwnScore, error, StudentOwnScoreExcel, int) {
 	allScores := []*StudentOwnScore{}
 	ScoreExcel := StudentOwnScoreExcel{}
 	request := gorequest.New()
 	resp, body, errs := request.Post(config.BaseURL+config.Personal_grades_inquiry).
 		Set("Cookie", cookies.String()).
-		Send("year=&term=&prop=&groupName=&para=0&sortColumn=&Submit=%E6%9F%A5%E8%AF%A2").
+		Send("year=" + year + "&term=" + term + "&prop=&groupName=&para=0&sortColumn=&Submit=%E6%9F%A5%E8%AF%A2").
 		End()
 	if errs != nil {
 		return nil, errs[0], ScoreExcel, 0
@@ -66,9 +67,6 @@ func GetAllStudentOwnScores(cookies *http.Cookie) ([]*StudentOwnScore, error, St
 							fmt.Println("绩点数转换错误:", err)
 							return
 						}
-						if strings.TrimSpace(tds.Eq(12).Text()) == "不及格" {
-							Fail++
-						}
 						if strings.Contains(strings.TrimSpace(tds.Eq(3).Text()), "习近平新时代中国特色社会主义思想概论") {
 							tds.Eq(3).SetText("习概")
 						} else if strings.Contains(strings.TrimSpace(tds.Eq(3).Text()), "马克思主义基本原理") {
@@ -97,11 +95,6 @@ func GetAllStudentOwnScores(cookies *http.Cookie) ([]*StudentOwnScore, error, St
 							fmt.Println("总评成绩转换错误:", err)
 							return
 						}
-						totalCreditPoints += credit * gradePoint
-						total++
-						totalCredits += credit
-						totalScores += Score
-						totalScoresW += Score * credit
 						score := &StudentOwnScore{
 							Coursename:  strings.TrimSpace(tds.Eq(3).Text()),
 							Score:       strings.TrimSpace(tds.Eq(5).Text()),
@@ -110,8 +103,18 @@ func GetAllStudentOwnScores(cookies *http.Cookie) ([]*StudentOwnScore, error, St
 							Status:      strings.TrimSpace(tds.Eq(12).Text()),
 							Categories:  strings.TrimSpace(tds.Eq(11).Text()),
 							Year:        strings.TrimSpace(tds.Eq(0).Text()),
+							Teacher:     strings.TrimSpace(tds.Eq(4).Text()),
 						}
 						allScores = append(allScores, score)
+						if strings.TrimSpace(tds.Eq(12).Text()) == "不及格" {
+							Fail++
+							return
+						}
+						totalCreditPoints += credit * gradePoint
+						total++
+						totalCredits += credit
+						totalScores += Score
+						totalScoresW += Score * credit
 					}
 				}
 			})

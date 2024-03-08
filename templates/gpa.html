@@ -23,7 +23,7 @@
         }
 
         .login-container {
-            width: 1000px;
+            width: 800px;
             padding: 20px;
             background-color: rgba(255, 255, 255, 0.8);
             border-radius: 5px;
@@ -176,6 +176,41 @@
             margin-top: 20px;
             display: block;
         }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+        }
+
+        .select {
+            width: 300px;
+            height: 40px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-group {
+            margin-right: 10px;
+        }
+        label {
+            display: inline-block;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #555;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -187,17 +222,39 @@
         </div>
         <ul class="menu-list">
             <li class="menu-item"><a href="/system">个人信息</a></li>
-            <li class="menu-item"><a href="/coursearrange">课表下载</a></li>
+            <li class="menu-item"><a href="/exam">考试安排</a></li>
+            <li class="menu-item"><a href="/lexam">等级考试</a></li>
             <li class="menu-item"><a href="/logout">退出系统</a></li>
         </ul>
+        <form action="/GPA" method="POST" class="form-container">
+            <div class="form-group flex">
+                <label for="year">选择年份：</label>
+                <select name="year" id="year" class="form-control select">
+                    <option value="">全部</option>
+                    <option value="44">2024</option>
+                    <option value="40">2020</option>
+                    <option value="41">2021</option>
+                    <option value="42">2022</option>
+                    <option value="43">2023</option>
+                </select>
+                <label for="term">选择学期：</label>
+                <select name="term" id="term" class="form-control select">
+                    <option value="">全部</option>
+                    <option value="1">春</option>
+                    <option value="3">秋</option>
+                </select>
+                <button type="submit" class="btn btn-primary">查询</button>
+            </div>
+        </form>
         <div class="content-area">
+
+            {{if .GPAS}}
             <div class="average-gpa">
                 <p>平均学分绩点：{{.ScoreExcel.AverageGPA}}</p>
                 <p>加权平均分：{{.ScoreExcel.Weighted}}</p>
                 <p>算数平均分：{{.ScoreExcel.Arithmetic}}</p>
                 <p>不及格门数：{{.Fail}}</p>
             </div>
-            {{if .GPAS}}
             <div class="table-container">
                 <table>
                     <tr>
@@ -207,6 +264,7 @@
                         <th>总评</th>
                         <th>学分</th>
                         <th>类别</th>
+                        <th>教师</th>
                         <th>状态</th>
                     </tr>
                     {{range .GPAS}}
@@ -217,21 +275,24 @@
                         <td>{{.Score}}</td>
                         <td>{{.Credits}}</td>
                         <td>{{.Categories}}</td>
+                        <td>{{.Teacher}}</td>
                         <td>{{.Status}}</td>
                     </tr>
                     {{end}}
                 </table>
             </div>
             {{else}}
-            <p>暂无绩点信息</p>
+            <p style="text-align: center;margin: auto;font-weight: bold;">{{.message}}!</p>
             {{end}}
         </div>
         <div class="file">
+            <p>不及格科目不计入</p>
             <p>平均学分绩点＝∑（课程学分数×绩点数）／∑课程学分数</p>
             <p>加权平均分等＝∑（课程学分数×总评分数）／∑课程学分数</p>
             <p>算术平均分＝∑（总评分数）／科目数量</p>
+            <a href="https://nnfx.glut.edu.cn/jwglb/info/1008/1422.htm">桂林理工大学【学生选课】本科毕业生平均学分绩点不足修读指南</a>
             <a href="https://nnfx.glut.edu.cn/__local/2/0B/90/956EEC4AEA9A0F705C186ACCF2D_0DAE76D0_6600.doc?e=.doc">桂林理工大学南宁分校学分绩点计算办法</a>
-            <a href="https://nnfx.glut.edu.cn/__local/2/0B/90/956EEC4AEA9A0F705C186ACCF2D_0DAE76D0_6600.doc?e=.doc">公共必修课体育等素质类必修课不参与学分绩点计算汇总表</a>
+            <a href="https://nnfx.glut.edu.cn/__local/D/18/36/7F21B451BA1BCD6009973B3320F_CF28928A_38AD.xlsx?e=.xlsx">公共必修课体育等素质类必修课不参与学分绩点计算汇总表</a>
         </div>
         <div class="Bottom">
             <p>
@@ -253,7 +314,7 @@
             popup.style.display = "none"; // 3秒后隐藏通知框
         }, 3000);
     }
-    showPopupNotification("{{.message}}！");
+    showPopupNotification("桂工教务助手-绩点查询！");
 </script>
 </body>
 </html>
